@@ -5,10 +5,10 @@ import sys
 
 DB_FILE = "test.db"
 create_tables = [
-    "CREATE TABLE Task(id INT PRIMARY KEY ASC, name TEXT);",
-    "CREATE TABLE StartEvent(id INT PRIMARY KEY ASC,task_id INT,\
+    "CREATE TABLE Task(task_id INT PRIMARY KEY ASC, name TEXT, user TEXT);",
+    "CREATE TABLE StartEvent(id INT PRIMARY KEY ASC, task_id INT,\
     	action TEXT,date DATETIME default current_timestamp, user TEXT);",
-    "CREATE TABLE StopEvent(id INT PRIMARY KEY ASC,task_id INT,\
+    "CREATE TABLE StopEvent(id INT PRIMARY KEY ASC, task_id INT,\
     	action TEXT,date DATETIME default current_timestamp, user TEXT);",
 ]
 

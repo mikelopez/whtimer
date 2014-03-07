@@ -31,10 +31,10 @@ class BaseTest(unittest.TestCase):
         db.close()
 
 
-    def add_task(self, name):
+    def add_task(self, id, name, user):
         """Adds a task to test timer functionality"""
         db = Database(connect=True)
-        q = db.query("INSERT INTO Task VALUES(1, '%s');" % name)
+        q = db.query("INSERT INTO Task VALUES(%s, '%s', '%s');" % (id, name, user))
         db.close() 
         return q
 
