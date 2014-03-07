@@ -46,7 +46,7 @@ class Database(object):
 		"""Run a select query."""
 		cur = self.connection.cursor()
 		cur.execute(query)
-		cur.commit()
+		self.connection.commit()
 		return cur
 
 			
