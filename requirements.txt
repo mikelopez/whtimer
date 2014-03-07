@@ -1,0 +1,6 @@
+nose
+simplejson
+termcolor
+git+git@github.com:mikelopez/termprint.git
+wsgiref
+sqlite3
