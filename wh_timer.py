@@ -4,7 +4,7 @@ DB_FILE = "test.db"
 
 class Database(object):
 	"""
-	Database class handling connection and sql queries
+	Quick Database wrapper for sqlite3 for testing
 	"""
 	result = None
 	connection = False
@@ -17,6 +17,7 @@ class Database(object):
 			
 
 	def connect(self, *args, **kwargs):
+		"""Connect to the database api fields."""
 		try:
 			connection = sql.connect(DB_FILE)
 			
