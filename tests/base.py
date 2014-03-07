@@ -1,3 +1,4 @@
+#dev@scidentify.info - Marcos Lopez
 import unittest
 
-from wh_timer import Database
+from db import Database

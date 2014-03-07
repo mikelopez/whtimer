@@ -1,3 +1,6 @@
+import sqlite3 as sql
+import sys
+
 # dev@scidentify.info - Marcos Lopez
 
 DB_FILE = "test.db"
