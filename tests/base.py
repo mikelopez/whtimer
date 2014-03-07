@@ -7,6 +7,39 @@ from termprint import *
 from db import Database
 
 class BaseTest(unittest.TestCase):
+
+    def create_tables(self):
+        """Create Tables"""
+        termprint("INFO", "Creating tables...")
+        # remove test.db file from rel directoruy
+        if os.path.exists("test.db"):
+            os.system('rm test.db')
+
+        # make the tables
+        db = Database(connect=True)
+        db.maketables()
+
+        # now check they exist
+        try:
+            db.maketables()
+        except Exception, e:
+            if "already exists" in str(e):
+                pass
+            else:
+                raise Exception(e)
+        termprint("INFO", "DONE")
+        db.close()
+
+
     def add_task(self, name):
         """Adds a task to test timer functionality"""
-        pass
+        db = Database(connect=True)
+        q = db.query("INSERT INTO Task VALUES(1, '%s');" % name)
+        db.close() 
+        return q
+
+    def select(self, query):
+    	db = Database(connect=True)
+    	q = db.select(query)
+    	db.close()
+    	return q

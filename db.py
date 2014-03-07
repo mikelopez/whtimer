@@ -6,8 +6,10 @@ import sys
 DB_FILE = "test.db"
 create_tables = [
     "CREATE TABLE Task(id INT PRIMARY KEY ASC, name TEXT);",
-    "CREATE TABLE StartEvent(id INT PRIMARY KEY ASC,task_id INT,action TEXT,date DATETIME default current_timestamp);",
-    "CREATE TABLE StopEvent(id INT PRIMARY KEY ASC,task_id INT,action TEXT,date DATETIME default current_timestamp);",
+    "CREATE TABLE StartEvent(id INT PRIMARY KEY ASC,task_id INT,\
+    	action TEXT,date DATETIME default current_timestamp, user TEXT);",
+    "CREATE TABLE StopEvent(id INT PRIMARY KEY ASC,task_id INT,\
+    	action TEXT,date DATETIME default current_timestamp, user TEXT);",
 ]
 
 class Database(object):
@@ -39,16 +41,23 @@ class Database(object):
 			raise Exception("Error connecting: %s" % e)
 			sys.exit(1)
 
-			
-	def query(self, query):
-		"""Return the query result."""
+
+	def query(self, query, commit=True):
+		"""Run a select query."""
 		cur = self.connection.cursor()
 		cur.execute(query)
-		data = cur.fetchone()
+		cur.commit()
+		return cur
+
+			
+	def select(self, query):
+		"""Return the query result."""
+		cur = self.query(query, commit=False)
+		data = cur.fetchall()
 		return data
 
 
 	def close(self):
 		"""Closes the connection."""
-		if getattr(self, 'con'):
-			getattr(self, 'con').close()
+		if getattr(self, 'connection'):
+			getattr(self, 'connection').close()
