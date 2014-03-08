@@ -2,7 +2,7 @@
 
 from base import *
 
-MAX_ADD = 50
+MAX_ADD = 10
 
 class TestLogic(BaseTest):
     """
@@ -11,7 +11,7 @@ class TestLogic(BaseTest):
     def setUp(self):
         """First create 100 task tests"""
         self.create_tables(dbfile="testdb.logic.db")
-        self.logw("** Adding 50 Test Tasks")
+        self.logw("** Adding %s Test Tasks" % MAX_ADD)
         for n in range(1, (MAX_ADD+1)):
             randstr = str(randint(111, 999))
             self.add_task(n, "Task %s" % randstr, "Name %s" % randstr)
@@ -36,22 +36,22 @@ class TestLogic(BaseTest):
         """
         # test select 100 tasks / taskevents from setUp()
         query = self.select('select count(task_id) from Task')
-        self.loge("Returned %s" % len(query))
-        self.assertTrue(len(query) == MAX_ADD)
+        self.loge("Returned %s" % query)
+        self.assertTrue(query[0][0] == MAX_ADD)
         query = self.select('select count(id) from TaskEvent')
-        self.assertTrue(len(query) == MAX_ADD)
+        self.assertTrue(query[0][0] == MAX_ADD)
 
         # checking tasks
         query = self.select('select * from Task where task_id = 10')
         self.assertTrue(len(query) == 1)
 
         # check all tasks are stopped
-        query = self.select('select count(id) from TaskEvent where stopped = 0')
-        self.assertTrue(len(query) == MAX_ADD)
+        query = self.select('select count(id) from TaskEvent where is_started = 0')
+        self.assertTrue(query[0][0] == MAX_ADD)
 
         # check task does not exist
-        c = self.select('select count(task_id) from Task where task_id = 420 and user = "Name 420"')
-        self.assertTrue(len(c) == 0)
+        query = self.select('select count(task_id) from Task where task_id = 420 and user = "Name 420"')
+        self.assertTrue(query[0][0] == 0)
 
         # now add the task
         new_task = self.add_task(420, 'MANTASK', 'Name 420')
@@ -62,9 +62,12 @@ class TestLogic(BaseTest):
         """Check if the task exists for the user so we can create or update.
         Could possibly avoid this by always adding the task event when adding a task"""
         c = self.select('select count(id) from TaskEvent where task_id = 420 and user = "Name 420"')
-        if len(c) > 0:
-            return True 
-        return False
+        try:
+            if int(c[0][0]) > 0:
+                return True 
+            return False
+        except IndexError:
+            return False
 
     def __insert_taskevent(self):
         """Inserts a brand new task event with minutes sum hardcoded to 0."""
@@ -74,9 +77,12 @@ class TestLogic(BaseTest):
     def __check_task_running(self):
         """Checks if the task is running if query result is > 0"""
         c = self.select('select count(id) from TaskEvent where task_id = 420 and user = "Name 420" and is_started = 1')
-        if len(c) > 0:
-            return True
-        return True
+        try:
+            if c[0][0] > 0:
+                return True
+            return False
+        except IndexError:
+            return False
 
 
     def test_logic(self):
@@ -92,12 +98,15 @@ class TestLogic(BaseTest):
         self.assertFalse(self.__check_task_exists())
         self.assertFalse(self.__check_task_running())
         # now add the tasks event
-        self.insert_taskevent()
+        self.__insert_taskevent()
         self.assertTrue(self.__check_task_exists())
 
 
+        # now the user wants to start another task with something running! :)
 
-        
+        # now the user wants to stop a task
+
+        # now the user wants to start another task again.... wtf? 
 
         pass
 
