@@ -4,11 +4,20 @@ import sys
 import os
 sys.path.append('../')
 from termprint import *
+from datetime import datetime, timedelta
+from random import randint
 from db import Database
 
 class BaseTest(unittest.TestCase):
 
-    def create_tables(self):
+    def logi(self, data):
+        termprint("INFO", data)
+    def logw(self, data):
+        termprint("WARNING", data)
+    def loge(self, data):
+        termprint("ERROR", data)
+
+    def create_tables(self, dbfile=None):
         """Create Tables"""
         termprint("INFO", "Creating tables...")
         # remove test.db file from rel directoruy
@@ -17,6 +26,8 @@ class BaseTest(unittest.TestCase):
 
         # make the tables
         db = Database(connect=True)
+        if dbfile:
+            db.dbfile = dbfile
         db.maketables()
 
         # now check they exist
@@ -32,9 +43,20 @@ class BaseTest(unittest.TestCase):
 
 
     def add_task(self, id, name, user):
-        """Adds a task to test timer functionality"""
+        """Adds a task to Task table. Requires ID, NAME, USER params"""
         db = Database(connect=True)
+        #print "INSERT INTO Task VALUES(%s, '%s', '%s');" % (id, name, user)
         q = db.query("INSERT INTO Task VALUES(%s, '%s', '%s');" % (id, name, user))
+        db.close() 
+        return q
+
+    def add_task_event(self, id, task_id, user, is_started, start, stop, minutes_sum):
+        """Adds a task to Task table. Requires ID, NAME, USER params"""
+        db = Database(connect=True)
+        values = "('%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (id, task_id, user, 
+                                                                 is_started, start, 
+                                                                 stop, minutes_sum)
+        q = db.query("INSERT INTO TaskEvent VALUES%s;" % (values))
         db.close() 
         return q
 

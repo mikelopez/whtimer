@@ -4,12 +4,27 @@ import sys
 # dev@scidentify.info - Marcos Lopez
 
 DB_FILE = "test.db"
+
 create_tables = [
-    "CREATE TABLE Task(task_id INT PRIMARY KEY ASC, name TEXT, user TEXT);",
-    "CREATE TABLE StartEvent(id INT PRIMARY KEY ASC, task_id INT,\
-    	action TEXT,date DATETIME default current_timestamp, user TEXT);",
-    "CREATE TABLE StopEvent(id INT PRIMARY KEY ASC, task_id INT,\
-    	action TEXT,date DATETIME default current_timestamp, user TEXT);",
+    "CREATE TABLE Task(\
+    	task_id INT PRIMARY KEY ASC, \
+    	name TEXT, \
+    	user TEXT\
+    );",
+    "CREATE TABLE TaskEvent(\
+    	id INT PRIMARY KEY ASC,\
+    	task_id INT,\
+		user TEXT, \
+		is_started INT,\
+		start DATETIME,\
+		stop DATETIME,\
+		minutes_sum INT\
+	);"
+    
+    #"CREATE TABLE StartEvent(id INT PRIMARY KEY ASC, task_id INT,\
+    #	action TEXT,date DATETIME default current_timestamp, user TEXT);",
+    #"CREATE TABLE StopEvent(id INT PRIMARY KEY ASC, task_id INT,\
+    #	action TEXT,date DATETIME default current_timestamp, user TEXT);"
 ]
 
 class Database(object):
@@ -18,6 +33,7 @@ class Database(object):
 	"""
 	result = None
 	connection = False
+	dbfile = DB_FILE
 
 	def __init__(self, *args, **kwargs):
 		"""Connect if kwargs present"""
@@ -36,7 +52,7 @@ class Database(object):
 	def connect(self, *args, **kwargs):
 		"""Connect to the database api fields."""
 		try:
-			self.connection = sql.connect(DB_FILE)
+			self.connection = sql.connect(self.dbfile)
 		except sql.Error, e:
 			raise Exception("Error connecting: %s" % e)
 			sys.exit(1)
